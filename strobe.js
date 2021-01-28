@@ -9,9 +9,8 @@ exports.anim = {tick: function (count,leds,pixelData) {
 			b=255;
 		}
 
-		const ledvar = b | r<<8 |g<<16;
 		for(var x=0;x<leds;x++){
-			pixelData(x,ledvar);
+			pixelData(x,r,g,b);
 		}
 	},
 	duration:200,

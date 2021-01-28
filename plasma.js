@@ -10,8 +10,7 @@ exports.anim = {tick: function (count,leds,pixelData) {
 				var r = (Math.sin((compa+compc)*Math.PI)+1)*128;
 				var g = (Math.sin((compa+compb)*Math.PI+2*Math.PI/3)+1)*128;
 				var b = (Math.sin((compb+compc)*Math.PI+4*Math.PI/3)+1)*128;
-				const ledvar = r | g<<8 | b<<16;
-				pixelData(i/2,ledvar);
+				pixelData(i/2,r,g,b);
 			}
 		}
 	},

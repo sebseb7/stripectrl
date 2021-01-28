@@ -31,12 +31,11 @@ exports.anim = {tick: function (count,leds,pixelData) {
 	var h = (count2%256)/256;
 	var pos = Math.floor((Math.sin(count)+1) * Math.floor(leds/2));
 	const rgb = HSVtoRGB(h,1,v);
-	const ledvar = rgb.r | rgb.g<<8 |rgb.b<<16;
 	for(var x=0;x<leds;x++){
 		if(Math.abs(x-pos)<20) {
-			pixelData(x,ledvar);
+			pixelData(x,rgb.r,rgb.g,rgb.b);
 		}else{
-			pixelData(x,0);
+			pixelData(x,0,0,0);
 		};
 	}
 	},
