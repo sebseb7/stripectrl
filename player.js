@@ -1,5 +1,14 @@
 const ws281x = require('rpi-ws281x-native');
-const SerialPort = require('serialport')
+const SerialPort = require('serialport');
+const midi = require('midi');
+
+const input = new midi.Input();
+
+for(var i = 0; i < input.getPortCount();i++){
+	if(input.getPortName(i) == 'nanoKONTROL2:nanoKONTROL2 MIDI 1 20:0'){
+		input.openPort(i);
+	}
+}
 
 var options = {
 	'baudRate': 250000,
@@ -36,16 +45,71 @@ function setPix(x,r,g,b){
 	pixelData[x]=ledvar;
 
 	if(x == 0){
-		dmxData[0] = r;
-		dmxData[1] = g;
-		dmxData[2] = b
+		dmxData[1] = r;
+		dmxData[2] = g;
+		dmxData[3] = b
+	}
+	if(x == 50){
+		dmxData[4] = r;
+		dmxData[5] = g;
+		dmxData[6] = b;
+	}
+	if(x == 100){
+		dmxData[7] = r;
+		dmxData[8] = g;
+		dmxData[9] = b;
+		dmxData[10] = 0;
+	}
+	if(x == 140){
+		dmxData[11] = r;
+		dmxData[12] = g;
+		dmxData[13] = b;
+		dmxData[14] = 0;
 	}
 }
+
+input.on('message', (deltaTime, message) => {
+
+	if((message[0]==176)&&(message[1]==0))
+		dmxData[0]=message[2]*2
+	if((message[0]==176)&&(message[1]==1))
+		dmxData[1]=message[2]*2
+	if((message[0]==176)&&(message[1]==2))
+		dmxData[2]=message[2]*2
+	if((message[0]==176)&&(message[1]==3))
+		dmxData[3]=message[2]*2
+	if((message[0]==176)&&(message[1]==4))
+		dmxData[4]=message[2]*2
+	if((message[0]==176)&&(message[1]==5))
+		dmxData[5]=message[2]*2
+	if((message[0]==176)&&(message[1]==6))
+		dmxData[6]=message[2]*2
+	if((message[0]==176)&&(message[1]==7))
+		dmxData[7]=message[2]*2
+	if((message[0]==176)&&(message[1]==16))
+		dmxData[8]=message[2]*2
+	if((message[0]==176)&&(message[1]==17))
+		dmxData[9]=message[2]*2
+	if((message[0]==176)&&(message[1]==18))
+		dmxData[10]=message[2]*2
+	if((message[0]==176)&&(message[1]==19))
+		dmxData[11]=message[2]*2
+	if((message[0]==176)&&(message[1]==20))
+		dmxData[12]=message[2]*2
+	if((message[0]==176)&&(message[1]==21))
+		dmxData[13]=message[2]*2
+	if((message[0]==176)&&(message[1]==22))
+		dmxData[14]=message[2]*2
+	if((message[0]==176)&&(message[1]==23))
+		dmxData[15]=message[2]*2
+
+//	console.log(message);
+});
 
 setInterval(function () {
 	count+=animations[curr_anim].step;
 	animations[curr_anim].tick(count,NUM_LEDS,setPix);
-	ws281x.render(pixelData);
+	//ws281x.render(pixelData);
 	if(count > animations[curr_anim].duration){
 		count=0;
 		curr_anim++;
@@ -67,7 +131,7 @@ setInterval(function () {
 									return console.log('Error on write DMX data ', err.message);
 								}
 								port.drain();
-								console.log(Buffer.from(dmxData));
+								//console.log(Buffer.from(dmxData));
 							});
 						});
 					});
