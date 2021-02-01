@@ -1,4 +1,4 @@
-const ws281x = require('rpi-ws281x-native');
+const isPi = require('detect-rpi');
 const SerialPort = require('serialport');
 const midi = require('midi');
 
@@ -17,11 +17,20 @@ var options = {
 	'parity': 'none'
 };
 
-const port = new SerialPort('/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AB0KP0FL-if00-port0',options);
+var port;
+if(isPi()){
+	port = new SerialPort('/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AB0KP0FL-if00-port0',options);
+}else{
+	port = new SerialPort('COM4',options);
+}
 
 const NUM_LEDS = 150;
 var pixelData = new Uint32Array(NUM_LEDS);
-ws281x.init(NUM_LEDS,{dmaNum:10,gpioPin:10});
+var ws281x;
+if(isPi()){
+	ws281x = require('rpi-ws281x-native');
+	ws281x.init(NUM_LEDS,{dmaNum:10,gpioPin:10});
+}
 
 var animations = [];
 var curr_anim = 0;
@@ -109,7 +118,9 @@ input.on('message', (deltaTime, message) => {
 setInterval(function () {
 	count+=animations[curr_anim].step;
 	animations[curr_anim].tick(count,NUM_LEDS,setPix);
-	//ws281x.render(pixelData);
+	if(isPi()){
+		ws281x.render(pixelData);
+	}
 	if(count > animations[curr_anim].duration){
 		count=0;
 		curr_anim++;

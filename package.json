@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "detect-rpi": "^1.4.0",
     "midi": "^1.0.0",
     "rpi-ws281x-native": "^0.10.1",
     "serialport": "^9.0.6"
