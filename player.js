@@ -5,8 +5,14 @@ const midi = require('midi');
 const input = new midi.Input();
 
 for(var i = 0; i < input.getPortCount();i++){
-	if(input.getPortName(i) == 'nanoKONTROL2:nanoKONTROL2 MIDI 1 20:0'){
-		input.openPort(i);
+	if(isPi()){
+		if(input.getPortName(i) == 'nanoKONTROL2:nanoKONTROL2 MIDI 1 20:0'){
+			input.openPort(i);
+		}
+	}else{
+		if(input.getPortName(i) == 'nanoKONTROL2 0'){
+			input.openPort(i);
+		}
 	}
 }
 
@@ -112,7 +118,7 @@ input.on('message', (deltaTime, message) => {
 	if((message[0]==176)&&(message[1]==23))
 		dmxData[15]=message[2]*2
 
-//	console.log(message);
+	console.log(message);
 });
 
 setInterval(function () {
